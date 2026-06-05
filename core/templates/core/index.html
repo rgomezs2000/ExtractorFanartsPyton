@@ -13,152 +13,160 @@
       <div>
         <p class="eyebrow">Django + WebView</p>
         <h1>Extractor Fanarts Python</h1>
-        <p>Descargas seguras con APIs, permisos, licencias, validación NSFW y consola integrada.</p>
+        <p>Descargas seguras con APIs, permisos, licencias, validación NSFW y consola global integrada.</p>
       </div>
       <span class="status-pill" id="app-status">Listo</span>
     </header>
 
-    <nav class="tabs" aria-label="Secciones">
-      <button class="tab active" data-tab="download-panel">Descarga</button>
-      <button class="tab" data-tab="settings-panel">Configuración</button>
-    </nav>
+    <section class="workspace workspace-top" aria-label="Panel superior de funciones">
+      <nav class="tabs" aria-label="Secciones">
+        <button class="tab active" data-tab="download-panel">Descarga</button>
+        <button class="tab" data-tab="settings-panel">Configuración</button>
+      </nav>
 
-    <section id="download-panel" class="panel active">
-      <form id="download-form" class="card grid-form">
-        {% csrf_token %}
-        <label>
-          Categoría de ilustración
-          <select name="category" required>
-            {% for category in categories %}<option value="{{ category }}">{{ category }}</option>{% endfor %}
-          </select>
-        </label>
-        <label>
-          Nombre, tag o URL autorizada
-          <input name="query" type="text" placeholder="Ej.: https://sitio/autorizado/imagen.png" required>
-        </label>
-        <label>
-          Página o fuente
-          <select name="source" id="platform-select" required>
-            {% for platform in platforms %}<option value="{{ platform.id }}">{{ platform.name }}</option>{% endfor %}
-          </select>
-        </label>
-        <label>
-          Carpeta de descarga
-          <input name="download_dir" type="text" placeholder="/ruta/a/imagenes" value="{{ settings.default_download_dir|default:'' }}" required>
-        </label>
-        <label class="check-row">
-          <input name="nsfw_enabled" id="nsfw-enabled" type="checkbox">
-          Habilitar NSFW / Rule34
-        </label>
-        <label id="birth-date-row" class="hidden">
-          Fecha de nacimiento
-          <input name="birth_date" id="birth-date" type="date">
-        </label>
-        <div class="actions">
-          <button type="button" class="secondary" id="clear-button">Limpiar</button>
-          <button type="submit" id="search-button">Buscar</button>
-        </div>
-      </form>
+      <section id="download-panel" class="panel active">
+        <form id="download-form" class="card grid-form">
+          {% csrf_token %}
+          <h2>Formulario de descarga</h2>
+          <label>
+            Categoría de ilustración
+            <select name="category" required>
+              {% for category in categories %}<option value="{{ category }}">{{ category }}</option>{% endfor %}
+            </select>
+          </label>
+          <label>
+            Nombre, tag o URL autorizada
+            <input name="query" type="text" placeholder="Ej.: https://sitio/autorizado/imagen.png" required>
+          </label>
+          <label>
+            Página o fuente
+            <select name="source" id="platform-select" required>
+              {% for platform in platforms %}<option value="{{ platform.id }}">{{ platform.name }}</option>{% endfor %}
+            </select>
+          </label>
+          <label>
+            Carpeta de descarga
+            <input name="download_dir" type="text" placeholder="/ruta/a/imagenes" value="{{ settings.default_download_dir|default:'' }}" required>
+          </label>
+          <label class="check-row">
+            <input name="nsfw_enabled" id="nsfw-enabled" type="checkbox">
+            Habilitar NSFW / Rule34
+          </label>
+          <label id="birth-date-row" class="hidden">
+            Fecha de nacimiento
+            <input name="birth_date" id="birth-date" type="date">
+          </label>
+          <div class="actions form-actions full-span" aria-label="Acciones de descarga">
+            <button type="button" class="secondary" id="clear-download-button">Limpiar descarga</button>
+            <button type="submit" id="download-button">Descargar</button>
+          </div>
+        </form>
+      </section>
 
-      <section class="card console-card">
-        <div class="console-header">
-          <h2>Consola</h2>
-          <span id="job-summary">Sin descargas activas</span>
+      <section id="settings-panel" class="panel">
+        <div class="settings-layout">
+          <form id="platform-form" class="card grid-form">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="platform-id">
+            <h2>Plataformas y APIs</h2>
+            <label>
+              Nombre de plataforma
+              <input name="name" type="text" placeholder="Ej.: Danbooru público" required>
+            </label>
+            <label>
+              Tipo de conector
+              <select name="connector_type">
+                {% for value, label in connector_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+              </select>
+            </label>
+            <label>
+              URL base / instancia
+              <input name="base_url" type="url" placeholder="https://...">
+            </label>
+            <label>
+              API key
+              <input name="api_key" type="password" autocomplete="off" placeholder="Se guardará localmente">
+            </label>
+            <label>
+              OAuth token / token bot autorizado
+              <input name="oauth_token" type="password" autocomplete="off" placeholder="No usar cuentas personales prohibidas">
+            </label>
+            <label>
+              Pausa entre solicitudes, máximo 30 segundos
+              <input name="rate_limit_seconds" type="number" min="0" max="30" value="30">
+            </label>
+            <label class="check-row"><input name="enabled" type="checkbox" checked> Plataforma habilitada</label>
+            <label class="check-row"><input name="terms_accepted" type="checkbox"> Términos revisados y aceptados</label>
+            <label class="check-row"><input name="strict_license_mode" type="checkbox" checked> Modo estricto de licencias</label>
+            <label class="check-row"><input name="allows_nsfw" type="checkbox"> Permite NSFW con validación de edad</label>
+            <label class="check-row"><input name="supports_public_search" type="checkbox" checked> Permite búsqueda pública</label>
+            <label class="check-row"><input name="supports_download" type="checkbox" checked> Permite descarga autorizada</label>
+            <label class="full-span">
+              Notas legales/técnicas
+              <textarea name="notes" placeholder="Documenta términos, límites, endpoints y permisos."></textarea>
+            </label>
+            <div class="actions form-actions full-span" aria-label="Acciones de plataformas">
+              <button type="button" class="secondary" id="reset-platform-button">Restablecer plataforma</button>
+              <button type="submit">Guardar plataforma</button>
+            </div>
+          </form>
+
+          <section class="card">
+            <h2>Plataformas configuradas</h2>
+            <div id="platform-list" class="platform-list">
+              {% for platform in platforms %}
+                <article class="platform-item" data-id="{{ platform.id }}">
+                  <strong>{{ platform.name }}</strong>
+                  <span>{{ platform.get_connector_type_display }}</span>
+                </article>
+              {% empty %}
+                <p class="muted">Aún no hay plataformas. Agrega una para habilitar descargas.</p>
+              {% endfor %}
+            </div>
+          </section>
+
+          <form id="settings-form" class="card grid-form">
+            {% csrf_token %}
+            <h2>Configuración básica y avanzada</h2>
+            <label>
+              Carpeta predeterminada
+              <input name="default_download_dir" type="text" value="{{ settings.default_download_dir|default:'' }}">
+            </label>
+            <label>
+              Tema
+              <select name="theme">
+                <option value="dark">Oscuro</option>
+                <option value="light">Claro</option>
+              </select>
+            </label>
+            <label>
+              Máximo de resultados
+              <input name="max_results" type="number" min="1" max="100" value="25">
+            </label>
+            <label>
+              Extensiones permitidas
+              <input name="allowed_extensions" type="text" value="jpg,jpeg,png,webp,gif">
+            </label>
+            <label class="check-row"><input name="clear_console_on_new_download" type="checkbox" checked> Limpiar consola al iniciar descarga</label>
+            <label class="check-row"><input name="safe_api_only_mode" type="checkbox" checked> Solo APIs oficiales / modo seguro</label>
+            <label class="check-row"><input name="strict_license_mode" type="checkbox" checked> Bloquear licencias no claras</label>
+            <div class="actions form-actions full-span" aria-label="Acciones de configuración del sistema">
+              <button type="button" class="secondary" id="reset-settings-button">Restablecer configuración</button>
+              <button type="submit" id="save-settings-button">Guardar configuración</button>
+            </div>
+          </form>
         </div>
-        <textarea id="console" readonly placeholder="Aquí aparecerán logs, errores de red, permisos, bloqueos y validaciones."></textarea>
       </section>
     </section>
 
-    <section id="settings-panel" class="panel">
-      <div class="settings-layout">
-        <form id="platform-form" class="card grid-form">
-          {% csrf_token %}
-          <input type="hidden" name="id" id="platform-id">
-          <h2>Plataformas y APIs</h2>
-          <label>
-            Nombre de plataforma
-            <input name="name" type="text" placeholder="Ej.: Danbooru público" required>
-          </label>
-          <label>
-            Tipo de conector
-            <select name="connector_type">
-              {% for value, label in connector_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
-            </select>
-          </label>
-          <label>
-            URL base / instancia
-            <input name="base_url" type="url" placeholder="https://...">
-          </label>
-          <label>
-            API key
-            <input name="api_key" type="password" autocomplete="off" placeholder="Se guardará localmente">
-          </label>
-          <label>
-            OAuth token / token bot autorizado
-            <input name="oauth_token" type="password" autocomplete="off" placeholder="No usar cuentas personales prohibidas">
-          </label>
-          <label>
-            Pausa entre solicitudes, máximo 30 segundos
-            <input name="rate_limit_seconds" type="number" min="0" max="30" value="30">
-          </label>
-          <label class="check-row"><input name="enabled" type="checkbox" checked> Plataforma habilitada</label>
-          <label class="check-row"><input name="terms_accepted" type="checkbox"> Términos revisados y aceptados</label>
-          <label class="check-row"><input name="strict_license_mode" type="checkbox" checked> Modo estricto de licencias</label>
-          <label class="check-row"><input name="allows_nsfw" type="checkbox"> Permite NSFW con validación de edad</label>
-          <label class="check-row"><input name="supports_public_search" type="checkbox" checked> Permite búsqueda pública</label>
-          <label class="check-row"><input name="supports_download" type="checkbox" checked> Permite descarga autorizada</label>
-          <label class="full-span">
-            Notas legales/técnicas
-            <textarea name="notes" placeholder="Documenta términos, límites, endpoints y permisos."></textarea>
-          </label>
-          <div class="actions full-span">
-            <button type="button" class="secondary" id="reset-platform-button">Nuevo</button>
-            <button type="submit">Guardar plataforma</button>
-          </div>
-        </form>
-
-        <section class="card">
-          <h2>Plataformas configuradas</h2>
-          <div id="platform-list" class="platform-list">
-            {% for platform in platforms %}
-              <article class="platform-item" data-id="{{ platform.id }}">
-                <strong>{{ platform.name }}</strong>
-                <span>{{ platform.get_connector_type_display }}</span>
-              </article>
-            {% empty %}
-              <p class="muted">Aún no hay plataformas. Agrega una para habilitar descargas.</p>
-            {% endfor %}
-          </div>
-        </section>
-
-        <form id="settings-form" class="card grid-form">
-          {% csrf_token %}
-          <h2>Configuración básica y avanzada</h2>
-          <label>
-            Carpeta predeterminada
-            <input name="default_download_dir" type="text" value="{{ settings.default_download_dir|default:'' }}">
-          </label>
-          <label>
-            Tema
-            <select name="theme">
-              <option value="dark">Oscuro</option>
-              <option value="light">Claro</option>
-            </select>
-          </label>
-          <label>
-            Máximo de resultados
-            <input name="max_results" type="number" min="1" max="100" value="25">
-          </label>
-          <label>
-            Extensiones permitidas
-            <input name="allowed_extensions" type="text" value="jpg,jpeg,png,webp,gif">
-          </label>
-          <label class="check-row"><input name="clear_console_on_new_download" type="checkbox" checked> Limpiar consola al iniciar descarga</label>
-          <label class="check-row"><input name="safe_api_only_mode" type="checkbox" checked> Solo APIs oficiales / modo seguro</label>
-          <label class="check-row"><input name="strict_license_mode" type="checkbox" checked> Bloquear licencias no claras</label>
-          <div class="actions full-span"><button type="submit">Guardar configuración</button></div>
-        </form>
-      </div>
+    <section class="workspace workspace-bottom" aria-label="Panel inferior de logs globales">
+      <section class="card console-card">
+        <div class="console-header">
+          <h2>Log global del sistema</h2>
+          <span id="job-summary">Sin descargas activas</span>
+        </div>
+        <textarea id="console" readonly placeholder="Aquí aparecerán logs globales, errores de red, permisos, bloqueos, configuraciones y validaciones."></textarea>
+      </section>
     </section>
   </main>
   <script src="{% static 'core/app.js' %}"></script>

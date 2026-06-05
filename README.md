@@ -61,8 +61,11 @@ Características esperadas:
 - Ventana principal con diseño moderno.
 - Backend local Django escuchando en `127.0.0.1`.
 - WebView embebido para mostrar la UI.
-- Consola visual integrada para logs.
-- Botones de inicio, cancelación y limpieza.
+- Consola visual integrada como panel global inferior para todo el sistema.
+- Panel superior con pestañas funcionales para Descarga y Configuración.
+- Botones de inicio, cancelación y limpieza dentro de la pestaña Descarga.
+- Botones de guardar y restablecer configuración dentro de la pestaña Configuración.
+- Bloqueo automático de campos de Descarga y Configuración mientras una descarga está activa, con desbloqueo al cancelar, finalizar o perder conexión con el trabajo.
 - Selector de carpeta local mediante diálogo nativo cuando sea posible.
 - Empaquetado futuro como ejecutable para escritorio.
 
