@@ -369,3 +369,49 @@ Esta licencia aplica al código del proyecto, pero no otorga derechos sobre imá
 8. Implementar conectores seguros empezando por fuentes con API pública clara.
 9. Agregar pruebas unitarias para validación NSFW, edad, archivos corruptos, hashes y errores de red.
 10. Documentar cada conector con sus términos, permisos y límites.
+
+## Código incluido en esta versión
+
+Esta versión ya incluye una base funcional del proyecto:
+
+- Proyecto Django en `extractor_fanarts/`.
+- App principal en `core/`.
+- Modelos para plataformas, credenciales locales y configuración.
+- UI WebView/Django con pestañas de descarga y configuración.
+- Endpoints JSON para plataformas, configuración, inicio, cancelación y estado de descargas.
+- Servicios de cumplimiento para NSFW, edad, licencias, privacidad, paywalls y términos.
+- Gestor de descargas en segundo plano con cancelación y consola.
+- Conector inicial de URL manual autorizada.
+- Registro de conectores placeholder para plataformas que requieren API oficial o implementación específica.
+- Helpers de hashes, integridad de imagen y política de sobrescritura/salto.
+- Pruebas unitarias para validación de edad, archivos corruptos, mensajes HTTP y endpoints básicos.
+
+## Instalación local
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
+```
+
+Luego abre `http://127.0.0.1:8000/`.
+
+## Ejecutar como escritorio WebView
+
+```bash
+python desktop.py
+```
+
+El launcher ejecuta migraciones, inicia Django localmente en `127.0.0.1:8765` y abre una ventana WebView si `pywebview` está instalado. Si WebView no está disponible, abre el navegador predeterminado.
+
+## Ejecutar pruebas
+
+```bash
+python manage.py test
+```
+
+## Limitaciones actuales
+
+La base funcional no implementa scraping de plataformas cerradas ni descarga masiva. Solo incluye un conector inicial de URL manual autorizada y deja conectores de plataformas como placeholders hasta revisar e implementar cada API oficial, permisos, términos, filtros NSFW y licencias.
