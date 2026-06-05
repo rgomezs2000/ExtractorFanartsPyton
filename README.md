@@ -61,6 +61,9 @@ Características esperadas:
 - Ventana principal con diseño moderno.
 - Backend local Django escuchando en `127.0.0.1`.
 - WebView embebido para mostrar la UI.
+- Interfaz basada en Bootstrap para formularios, pestañas, badges y paneles responsivos.
+- AJAX con jQuery para plataformas, configuración, inicio/cancelación y estado de descargas.
+- Diálogos Bootbox.js para mensajes informativos, errores, advertencias y confirmaciones.
 - Consola visual integrada como panel global inferior para todo el sistema.
 - Panel superior con pestañas funcionales para Descarga y Configuración.
 - Botones de inicio, cancelación y limpieza dentro de la pestaña Descarga.
@@ -407,7 +410,7 @@ Luego abre `http://127.0.0.1:8000/`.
 python desktop.py
 ```
 
-El launcher ejecuta migraciones, inicia Django localmente en `127.0.0.1:8765` y abre una ventana WebView si `pywebview` está instalado. Si WebView no está disponible, abre el navegador predeterminado.
+El launcher ejecuta migraciones, inicia Django localmente en `127.0.0.1:8765` y abre una ventana WebView si `pywebview` está instalado. Si WebView no está disponible, abre el navegador predeterminado. La UI carga Bootstrap, jQuery y Bootbox.js desde CDN; para distribución offline conviene empaquetar esas librerías como archivos estáticos locales.
 
 ## Ejecutar pruebas
 
